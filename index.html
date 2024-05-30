@@ -1,0 +1,612 @@
+<html>
+
+<head>
+  <title>DITTO-2: Distilled Diffusion Inference-Time T-Optimization</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <meta name="theme-color" content="#563d7c">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      table-layout: fixed;
+    }
+
+
+    td {
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    audio {
+      width: 100%;
+      /* height: 70%; */
+    }
+  </style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#000000" vlink="#000000" alink="#000000">
+  <div class="text-center">
+    <br>
+    <div class="text-wrap" width="200px">
+      <font face="helvetica , ariel, &#39;sans serif&#39;" size="6">
+        <b>DITTO-2:</br>Distilled Diffusion Inference-Time T-Optimization</br>for Music Generation</b><br><br>
+      </font>
+    </div>
+
+    <p style="font-size: 1.3em; margin-bottom: 0;">
+      <a href="https://zacharynovack.github.io/"> Zachary Novack<sup>1</sup> </a>&nbsp;
+      <a href="https://cseweb.ucsd.edu/~jmcauley/">Julian McAuley<sup>1</sup> </a>&nbsp;
+      <a href="https://cseweb.ucsd.edu/~tberg/"> Taylor Berg-Kirkpatrick<sup>1</sup></a> &nbsp;
+      <a href="https://njb.github.io/"> Nicholas J. Bryan<sup>2</sup></a> &nbsp;
+    </p>
+    <p style="margin-top: 0;">
+      <sup>1</sup>University of California, San Diego<br>
+      <sup>2</sup>Adobe Research <br>
+      <!-- <sup>*</sup>Work done during an internship at Adobe Research <br> -->
+    </p>
+
+    <div class="m-5">
+      <a class="btn btn-outline-dark" href="https://arxiv.org/abs/2401.12179" type="button"><i
+          class="bi bi-newspaper"></i> Paper</a>
+    </div>
+
+
+
+    <div class="container mt-4" style="max-width: 1000px;">
+      <div class="container">
+
+
+        <div class="container mt-4 " style="max-width: 950px;">
+          <div class="container">
+            <div class="section">
+              <!-- # Show video -->
+              <br>
+              <!-- Show Abstract -->
+              <h1 class="text-justify">Abstract</h1>
+              <hr>
+              <p class="pr-5 pl-5 text-justify">
+                Controllable music generation methods are critical for human-centered AI-based music creation, but are currently limited by speed, quality, and control design trade-offs.
+Diffusion inference-time T-optimization (DITTO), in particular, offers state-of-the-art results, but is over 10x slower than real-time, limiting practical use. We propose  <b>D</b>istilled <b>D</b>iffusion <b>I</b>nference-<b>T</b>ime <b>T</b>-<b>O</b>ptimization (or <b>DITTO-2</b>), a new method to speed up inference-time optimization-based control and unlock faster-than-real-time generation for a wide-variety of applications such as music inpainting, outpainting, intensity, melody, and musical structure control. Our method works by 
+(1) distilling a pre-trained diffusion model for fast sampling via an efficient, modified consistency or consistency trajectory distillation process (2) performing inference-time optimization using our distilled model with one-step sampling as an efficient surrogate optimization task and (3) running a final multi-step sampling generation (decoding) using our estimated noise latents for best-quality, fast, controllable generation. Through thorough evaluation, we find our method not only speeds up generation over 10-20x, but simultaneously improves control adherence and generation quality all at once. Furthermore, we apply our approach to a new application of maximizing text adherence (CLAP score) and show we can convert an unconditional diffusion model without text inputs into a model that yields state-of-the-art text control.
+              </p>
+            </div><br>
+
+            <!-- Show bibtext -->
+            <div class="section text-left" div style='text-align:left'>
+              <h1>Bibtex</h1>
+              <!-- <hr> -->
+              <div style="background-color: #e9ecef; text-align:left;">
+                <pre>
+          <code>
+          @article{Novack2024Ditto2,
+              title={{DITTO-2}: Distilled Diffusion Inference-Time T-Optimization for Music Generation}, 
+              author={Novack, Zachary and McAuley, Julian and Berg-Kirkpatrick, Taylor and Bryan, Nicholas J.},
+              year={2024},
+              eprint={2401.12179},
+              archivePrefix={arXiv},
+              primaryClass={cs.SD}
+          }</code>
+                    </pre>
+              </div>
+            </div>
+
+            <div class="section text-justify">
+              <h1>Examples</h1>
+              Below, we display editing and control results for a wide range of music creation tasks, including
+              outpainting, inpainting, intensity, melody, musical structure, and freeform text (CLAP) control. Note that this
+              webpage is best viewed with Chrome.
+              The examples here randomly generated, using 1 sampling step during the optimization process and 2 sampling steps in the final decoding process. For CLAP control, samples are generated with a fully unconditional (rather than tag-conditioned) model.
+              <br><br>
+
+              For the outpainting and inpainting examples, we show the generated audio
+              with an overlap region of 1 second. For intensity and musical structure control, we show the generated
+              audio, with the control described in the caption (e.g. "high to low intensity" for intensity control or "A (3 seconds), B (3 seconds)" for structure control). For melody control, we show the
+              original melody and generated audio. For Text (CLAP) control, we show the input text caption.
+
+              <table class="table table-sm text-center" style="vertical-align: middle;">
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Outpainting</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <audio controls>
+                      <source
+                        src="Outpainting/mood=Epic_genre=Classical_BPM=95.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Outpainting/mood=Epic_genre=Pop_BPM=126.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Outpainting/mood=Nostalgic_genre=Rock_BPM=140.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Outpainting/mood=Sexy_genre=Dance_BPM=99.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Outpainting/mood=Suspenseful_genre=Film_BPM=126.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Inpainting</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <audio controls>
+                      <source
+                        src="Inpainting/mood=Frantic_genre=Background_BPM=123.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Inpainting/mood=Epic_genre=Pop_BPM=140.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Inpainting/mood=Inspiring_genre=Acoustic_BPM=106.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Inpainting/mood=Powerful_genre=Classical_BPM=131.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Inpainting/mood=Suspenseful_genre=World_BPM=89.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Text (CLAP) Control</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Caption: A male vocalist sings this energetic Punjabi folk song. The tempo is medium fast with an infectious tabla and Dhol percussive beat, ektara rhythm and a funky keyboard accompaniment. The song is lively, spirited, cheerful, simple, happy, playful, enthusiastic, vivacious with a festive, celebratory vibe and dance groove. This song is a Festive Punjabi Folk song.</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <audio controls>
+                      <source
+                        src="CLAP/2wFjBoreaY.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Caption: This instrumental song features a distortion guitar playing a guitar solo. The guitar starts playing an ascending pattern followed by a sweep picking lick. This is followed by an alternate picking pattern. The ending of this solo consists of a sweep picking lick using string skipping technique. There are no other instruments in this song. There is no voice in this song.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="CLAP/J0lA7ZDfPLE.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Caption: Solo harmonica playing blues licks, followed by a male voiceover.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="CLAP/m8-aK8egg84.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Caption: This is a hard rock music piece. There is a male vocalist singing in the lead. The electric guitar is playing the main melody while a bass guitar plays in the background. The acoustic drums are playing a groovy rock beat. There is a raw, psychedelic feel to this piece. It could be playing in the background of a rock bar.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="CLAP/Utl5it7YMUs.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Caption: This is a guitar cover video. There are no vocals in this piece. The acoustic guitar is playing a mellow tune with the heavy use of arpeggios. The atmosphere is gentle and relaxing. This piece could be used as the opening theme of a teenage drama TV series. It could also be playing in the background at a coffee shop.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="CLAP/XWVGQbfpA0k.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Intensity Control</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: Low to High Intensity, Linear Ramp.</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <audio controls>
+                      <source
+                        src="Intensity/mood=Epic_genre=Classical_BPM=97_lo2hi.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: High to Low to High Intensity, Hard Jump.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Intensity/mood=Epic_genre=Classical_BPM=144_hilohi.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: Low to High to Low Intensity, Hard Jump.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Intensity/mood=Frantic_genre=Background_BPM=112_lohilo.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: Low to High Intensity, Hard Jump.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Intensity/mood=Nostalgic_genre=Rock_BPM=129_lo2hi.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: High to Low Intensity, Linear Ramp.</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Intensity/mood=Sad_genre=Religious_BPM=137_hi2lo.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Musical Structure Control</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: A (4 seconds), B (2 seconds).</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <audio controls>
+                      <source
+                        src="Structure/mood=Angry_genre=Electronic_BPM=81_AAB.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: A (4.5 seconds), B (1.5 seconds).</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Structure/mood=Epic_genre=Classical_BPM=88_AAAB.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: A (1.5 seconds), B (4.5 seconds).</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Structure/mood=Happy_genre=Pop_BPM=111_ABBB.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: A (2 seconds), B (4 seconds).</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Structure/mood=Sad_genre=Jazz_BPM=121_ABB.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Control: A (1.5 seconds), B(3 seconds), A (1.5 seconds).</h5>
+                  </td>
+                </tr>
+                <tr>
+                    <td colspan="70">
+                      <audio controls>
+                        <source
+                          src="Structure/mood=Suspenseful_genre=Classical_BPM=101_ABBA.wav"
+                          type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </td>
+                  </tr>
+                </tr>
+                <tr>
+                  <td colspan="70">
+                    <h5 class="text-center">Melody Control</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="35">
+                    <h5 class="text-center">Reference</h5>
+                  </td>
+                  <td colspan="35">
+                    <h5 class="text-center">Generated</h5>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/65.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/mood=Suspenseful_genre=World_BPM=119_65.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/142.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/mood=Inspiring_genre=Background_BPM=160_142.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/149.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/mood=Inspiring_genre=Acoustic_BPM=119_149.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/276.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/mood=Nostalgic_genre=Rock_BPM=120_276.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/336.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                  <td colspan="35">
+                    <audio controls>
+                      <source
+                        src="Melody/mood=Epic_genre=Classical_BPM=119_336.wav"
+                        type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </td>
+                </tr>
+              </table>
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
